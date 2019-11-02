@@ -1,0 +1,35 @@
+.form-layout{
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 2;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.Form{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    padding: 30px;
+    width: 40vw;
+    background-color: white;
+    box-shadow: 0px 0px 10px 10px gray;
+    animation: animate 0.2s linear 1 forwards;
+}
+
+.close{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    outline: none!important;
+    border: none;
+}
+
+@keyframes animate{
+    100%{
+        transform: translate(-50%, -50%) scale(1);
+    }
+}
