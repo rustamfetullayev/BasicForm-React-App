@@ -3,6 +3,7 @@ import Table from '../../components/Table/Table';
 import Form from '../../components/Form/Form';
 import Alert from '../../components/Alert/Alert';
 import current_server from '../Axios/Axios';
+import Loader from '../../components/Loader/Loader';
 
 
 class UserControler extends Component {
@@ -14,18 +15,19 @@ class UserControler extends Component {
         countryID: 0,
         persons: [],
         isFormShow: false,
+        isLoading: true,
         alertComponent: null
     }
 
     componentDidMount() {
         current_server.get('/persons.json').then(response => {
             let persons = Object.values(response.data);
-            this.setState({ persons: persons })
+            this.setState({ persons: persons, isLoading: false })
         });
     }
 
     changeHandler = (event) => {
-        let keyName = Object.keys(this.state).find(k => k === event.target.name);
+        let keyName = event.target.name;
         if (keyName === 'age') {
             if (event.target.value.length > 2) {
                 return false;
@@ -48,11 +50,11 @@ class UserControler extends Component {
         }
         else {
             let newPerson = {
-                fullname: this.state.fullname,
-                email: this.state.email,
-                age: this.state.age,
                 about: this.state.about,
-                country: this.state.countryID
+                age: this.state.age,
+                country: this.state.countryID,
+                email: this.state.email,
+                fullname: this.state.fullname
             }
 
             current_server.post('/persons.json', newPerson).then(response => console.log(response)).catch(error => console.log(error));
@@ -88,28 +90,34 @@ class UserControler extends Component {
     render() {
         return (
             <div className='container'>
-                <div className='row'>
-                    {this.state.alertComponent}
-                    {this.state.isFormShow ?
-                        <Form
-                            fullname={this.state.fullname}
-                            email={this.state.email}
-                            age={this.state.age}
-                            about={this.state.about}
-                            countryID={this.state.countryID}
-                            changeHandler={this.changeHandler}
-                            addNewUser={this.addNewUser}
-                            toogleForm={this.toogleForm} />
-                        :
-                        null
-                    }
-                    {
-                        this.state.persons.length !== 0 ?
-                            <Table tableName='Users' data={this.state.persons} toogleForm={this.toogleForm} />
+                {this.state.isLoading ?
+                    <div className='row'>
+                        <Loader />
+                    </div>
+                    :
+                    <div className='row'>
+                        {this.state.alertComponent}
+                        {this.state.isFormShow ?
+                            <Form
+                                fullname={this.state.fullname}
+                                email={this.state.email}
+                                age={this.state.age}
+                                about={this.state.about}
+                                countryID={this.state.countryID}
+                                changeHandler={this.changeHandler}
+                                addNewUser={this.addNewUser}
+                                toogleForm={this.toogleForm} />
                             :
                             null
-                    }
-                </div>
+                        }
+                        {
+                            this.state.persons.length !== 0 ?
+                                <Table tableName='Users' data={this.state.persons} toogleForm={this.toogleForm} />
+                                :
+                                null
+                        }
+                    </div>
+                }
             </div>
         )
     }
